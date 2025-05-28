@@ -32,25 +32,25 @@ Description: Setup K2 plugin registration and the mechanism to read FQN targets 
 
 ### Story 1.3: Identify Target Functions via FQN and Modify Signatures (K2) (lumos-plugin)
 Description: Match functions (Kotlin & Java) against FQN configuration and modify their FIR signatures to include the Lumen parameter.
-- [ ] Task 1.3.1: (lumos-plugin) Implement a FirDeclarationGenerationExtension (or a more suitable K2 extension like FirFunctionTargetPatcher or a custom FirFunctionTransformer).
-- [ ] Task 1.3.2: (lumos-plugin) Within the chosen extension, iterate through FirFunction declarations in the compilation unit.
-- [ ] Task 1.3.3: (lumos-plugin) For each FirFunction, attempt to match its fully qualified name and signature against the parsed FQN targets from Story 1.2.
-  - [ ] Sub-task: Ensure this matching logic works for both Kotlin-defined and Java-defined functions represented in FIR.
-  - [ ] Sub-task: Handle parameter type matching carefully (e.g., mapping Java types to Kotlin types if necessary for comparison or using FIR type representations).
-- [ ] Task 1.3.4: (lumos-plugin) For each matched function, modify its FirFunction representation to add a new value parameter of type Lumen.
-  - [ ] Sub-task: Ensure correct resolution of the Lumen type symbol from lumos-runtime.
+- [x] Task 1.3.1: (lumos-plugin) Implement a FirDeclarationGenerationExtension (or a more suitable K2 extension like FirFunctionTargetPatcher or a custom FirFunctionTransformer).
+- [x] Task 1.3.2: (lumos-plugin) Within the chosen extension, iterate through FirFunction declarations in the compilation unit.
+- [x] Task 1.3.3: (lumos-plugin) For each FirFunction, attempt to match its fully qualified name and signature against the parsed FQN targets from Story 1.2.
+  - [x] Sub-task: Ensure this matching logic works for both Kotlin-defined and Java-defined functions represented in FIR.
+  - [x] Sub-task: Handle parameter type matching carefully (e.g., mapping Java types to Kotlin types if necessary for comparison or using FIR type representations).
+- [x] Task 1.3.4: (lumos-plugin) For each matched function, modify its FirFunction representation to add a new value parameter of type Lumen.
+  - [x] Sub-task: Ensure correct resolution of the Lumen type symbol from lumos-runtime.
 
 ### Story 1.4: Transform Call Sites of FQN-Targeted Functions (K2) (lumos-plugin)
 Description: Modify FIR call sites to the FQN-targeted functions to pass the Lumen object, populated with basic metadata.
-- [ ] Task 1.4.1: (lumos-plugin) Implement a FirExpressionResolutionExtension or use a FIR visitor/transformer to find FirFunctionCall expressions.
-- [ ] Task 1.4.2: (lumos-plugin) Identify calls that resolve to the now-transformed (FQN-targeted) functions.
-- [ ] Task 1.4.3: (lumos-plugin) At each identified call site:
-  - [ ] Sub-task: Extract source information (file path, line number) using FIR APIs (e.g., from FirElement.source). This needs to work for calls originating from both Kotlin and Java files.
-  - [ ] Sub-task: Extract the targetFunctionName.
-- [ ] Task 1.4.4: (lumos-plugin) Generate FIR code to:
-  - [ ] Sub-task: Construct an instance of the Lumen data class.
-  - [ ] Sub-task: Populate its fields with the extracted metadata.
-- [ ] Task 1.4.5: (lumos-plugin) Modify the FirFunctionCall to include the newly created Lumen instance as an argument.
+- [x] Task 1.4.1: (lumos-plugin) Implement a FirExpressionResolutionExtension or use a FIR visitor/transformer to find FirFunctionCall expressions.
+- [x] Task 1.4.2: (lumos-plugin) Identify calls that resolve to the now-transformed (FQN-targeted) functions.
+- [x] Task 1.4.3: (lumos-plugin) At each identified call site:
+  - [x] Sub-task: Extract source information (file path, line number) using FIR APIs (e.g., from FirElement.source). This needs to work for calls originating from both Kotlin and Java files.
+  - [x] Sub-task: Extract the targetFunctionName.
+- [x] Task 1.4.4: (lumos-plugin) Generate FIR code to:
+  - [x] Sub-task: Construct an instance of the Lumen data class.
+  - [x] Sub-task: Populate its fields with the extracted metadata.
+- [x] Task 1.4.5: (lumos-plugin) Modify the FirFunctionCall to include the newly created Lumen instance as an argument.
 
 ### Story 1.5: MVP Integration & End-to-End Testing (FQN Focus)
 Description: Verify the FQN-based injection works for both Kotlin and Java methods in a sample project.
