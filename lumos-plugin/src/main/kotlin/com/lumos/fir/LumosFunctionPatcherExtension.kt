@@ -28,13 +28,26 @@ import com.lumos.runtime.Lumen
  * This extension identifies functions based on the configurations provided via [LumosSessionComponent]
  * or by the presence of the `@LumosMaxima` annotation. It then modifies their FIR representation
  * to include a [Lumen] parameter. It is registered by [LumosFirExtensionRegistrar].
- *
  * @property session The current FIR session, used for various lookups and operations.
  */
 class LumosFunctionPatcherExtension(session: FirSession) : FirFunctionTargetPatcherExtension(session) {
 
+    /**
+     * The session component that holds configuration for the Lumos plugin.
+     * It provides the list of parsed FQN targets ([LumosSessionComponent.parsedFqnTargets])
+     * and stores the symbols of functions whose signatures have been transformed
+     * ([LumosSessionComponent.transformedFunctionSymbols]).
+     */
     private val lumosSessionComponent: LumosSessionComponent = session.registrations.findRequire(LumosSessionComponent::class)
 
+    /**
+     * Normalizes a type string by removing common prefixes like "kotlin." and "java.lang.".
+     * This aids in comparing type strings derived from FIR (which are fully qualified)
+     * with type strings from parsed FQN configurations (which might be less specific).
+     *
+     * @param typeStr The type string to normalize.
+     * @return The normalized type string.
+     */
     private fun normalizeTypeString(typeStr: String): String {
         return typeStr.replace("kotlin.", "").replace("java.lang.", "")
     }
@@ -74,7 +87,6 @@ class LumosFunctionPatcherExtension(session: FirSession) : FirFunctionTargetPatc
             // 2. If not annotated, proceed with existing FQN matching logic
             val callableId = functionSymbol.callableId
             // val firFunction is already available from above.
-
             val currentFunctionContextFqn = callableId.classId?.asSingleFqName()?.asString() 
                                             ?: callableId.packageName.asString()
             val currentFunctionName = callableId.callableName.asString()
@@ -111,8 +123,44 @@ class LumosFunctionPatcherExtension(session: FirSession) : FirFunctionTargetPatc
         }
     }
 
+    /**
+     * Returns a [FirFunctionTargetPatcher] responsible for modifying the matched function targets.
+     * The returned patcher specifically adds a [Lumen] parameter to the function signature.
+     *
+     * @return A [FirFunctionTargetPatcher] instance that performs the function modification.
+     */
     override fun getPatcher(): FirFunctionTargetPatcher {
+        /**
+         * An anonymous implementation of [FirFunctionTargetPatcher] that modifies a given
+         * [FirFunctionTarget] to include a [Lumen] parameter.
+         * This is the core logic for altering function signatures within the Lumos plugin.
+         */
         return object : FirFunctionTargetPatcher(session) {
+            /**
+             * Modifies the provided [target] (a [FirFunctionTarget]) by adding a [Lumen] parameter
+             * to its underlying [FirSimpleFunction].
+             *
+             * The process involves:
+             * 1. Retrieving the original [FirSimpleFunction] from the target.
+             * 2. Resolving the [com.lumos.runtime.Lumen] class type within the current FIR session.
+             *    If resolution fails, the original target is returned unmodified.
+             * 3. Creating a new [FirValueParameter] representing the `lumen: Lumen` parameter.
+             *    This parameter is marked with [LumosPluginDeclarationOrigin].
+             * 4. Constructing a new [FirSimpleFunction] by copying all properties from the original
+             *    function and appending the new `lumen` parameter to its value parameter list.
+             *    The new function is also marked with [LumosPluginDeclarationOrigin].
+             *    A new [FirNamedFunctionSymbol] is created for the new function, using the
+             *    `CallableId` of the original function's symbol.
+             * 5. Storing the symbol of the newly created (modified) function in
+             *    [LumosSessionComponent.transformedFunctionSymbols] for later identification by
+             *    call site transformers.
+             * 6. Returning a new [FirFunctionTarget] that points to the modified function's symbol.
+             *
+             * @param target The function target to modify.
+             * @return A new [FirFunctionTarget] referencing the modified function, or the original
+             *         [target] if modification was not possible or applicable (e.g., not a [FirSimpleFunction]
+             *         or if [Lumen] type resolution fails).
+             */
             override fun modifyTarget(target: FirFunctionTarget): FirFunctionTarget {
                 val originalFunctionSymbol = target.functionSymbol ?: return target
                 val originalFunction = originalFunctionSymbol.fir
@@ -127,6 +175,7 @@ class LumosFunctionPatcherExtension(session: FirSession) : FirFunctionTargetPatc
                 if (lumenClassSymbol == null) {
                     return target
                 }
+                
                 val lumenConeType = lumenClassSymbol.defaultType()
 
                 val lumenParameterSymbol = FirValueParameterSymbol()
