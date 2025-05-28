@@ -1,5 +1,6 @@
 plugins {
-    kotlin("jvm") version "1.9.22"
+    // kotlin("jvm") version "1.9.22" // Applied from root
+    `maven-publish`
 }
 
 repositories {
@@ -7,5 +8,20 @@ repositories {
 }
 
 dependencies {
-    implementation(kotlin("stdlib"))
+    implementation(kotlin("stdlib")) // Inherited from root
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            groupId = project.group.toString()
+            artifactId = project.name // "lumos-runtime"
+            version = project.version.toString()
+
+            from(components["java"])
+        }
+    }
+    repositories {
+        mavenLocal()
+    }
 }
