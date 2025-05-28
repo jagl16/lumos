@@ -10,11 +10,6 @@ repositories {
     mavenCentral()
 }
 
-// Common dependencies for subprojects can be defined here if needed
-// dependencies {
-//     implementation(kotlin("stdlib"))
-// }
-
 // Configure subprojects
 subprojects {
     apply(plugin = "org.jetbrains.kotlin.jvm")

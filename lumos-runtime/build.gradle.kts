@@ -3,22 +3,13 @@ plugins {
     `maven-publish`
 }
 
-// group and version are inherited from the root project
-
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    // implementation(kotlin("stdlib")) // Inherited from root
+    implementation(kotlin("stdlib")) // Inherited from root
 }
-
-// Optional: Configure Kotlin compilation options if needed
-// tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-//     kotlinOptions {
-//         jvmTarget = "1.8" // Inherited from root or defaults
-//     }
-// }
 
 publishing {
     publications {

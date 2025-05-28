@@ -1,16 +1,13 @@
 plugins {
-    // kotlin("jvm") version "1.9.22" // Applied from root
     `maven-publish`
 }
-
-// group and version are inherited from the root project
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    // implementation(kotlin("stdlib")) // Inherited from root
+    implementation(kotlin("stdlib"))
     // For compiler plugins
     compileOnly(kotlin("compiler-embeddable")) // Or kotlin("compiler")
     // K2/FIR specific artifacts - placeholder, might need to be adjusted
