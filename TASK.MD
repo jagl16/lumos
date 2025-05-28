@@ -63,6 +63,14 @@ Description: Verify the FQN-based injection works for both Kotlin and Java metho
   - [ ] Assert that the Lumen parameter is accessible with correct basic data at runtime (if tests allow execution) or by inspecting generated IR/bytecode.
 - [ ] Task 1.5.5: Document basic setup (plugin application, lumos-runtime dependency) and FQN configuration in README.md. Document the initial Lumen fields.
 
+### Story 1.A: Annotation-Based Targeting with @LumosMaxima
+Description: Allow functions to be targeted for Lumen injection by annotating them with `@com.lumos.runtime.LumosMaxima`.
+- [x] Task 1.A.1: (lumos-runtime) Define the `@LumosMaxima` annotation class.
+- [x] Task 1.A.2: (lumos-plugin) Update `LumosFunctionPatcherExtension` to identify functions annotated with `@LumosMaxima`.
+  - [x] Sub-task: Prioritize annotation matching before FQN matching.
+- [x] Task 1.A.3: (lumos-plugin) Ensure downstream logic (parameter addition, call site transformation) handles functions targeted by annotation.
+- [x] Task 1.A.4: (lumos-plugin) Update KDoc for `getMatcher()` to reflect new annotation logic.
+
 ## Phase 2: Call Site Hash & Richer Lumen Data (K2)
 (FQN configuration is now part of MVP; this phase focuses on enhancing Lumen.)
 
