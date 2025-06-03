@@ -14,6 +14,11 @@ dependencies {
     implementation(kotlin("stdlib"))
     testImplementation(kotlin("test")) // For writing tests (e.g., JUnit or KotlinTest)
 
+    // Added dependencies for Lumos testing
+    testImplementation("com.github.tschuchortdev:kotlin-compile-testing:1.5.0")
+    testImplementation(project(":lumos-plugin"))
+    testImplementation(project(":lumos-runtime"))
+
     // Dependencies on kotlin-compile-testing, lumos-plugin, and lumos-runtime
     // will be added later after local publishing setup or when specific versions are known.
     // For example:
